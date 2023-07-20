@@ -1,0 +1,28 @@
+{
+    "jsonAnnotations": [
+        {
+            "startTime": 7.450881,
+            "stopTime": 12.8153725,
+            "annotationText": "ok",
+            "Categories": [
+            ]
+        },
+        {
+            "startTime": 13.7972031,
+            "stopTime": 20.9868736,
+            "annotationText": "PEDESTRIAN",
+            "Categories": [
+            ]
+        },
+        {
+            "startTime": 3.78404522,
+            "stopTime": 6.052454,
+            "annotationText": "Pedestrian approaches road",
+            "Categories": [
+            ]
+        }
+    ],
+    "scenarioLength": 22.6840878,
+    "scenarioName": "silly",
+    "currentTime": 0.0
+}
