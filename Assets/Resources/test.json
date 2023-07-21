@@ -1,25 +1,22 @@
 {
     "jsonAnnotations": [
         {
-            "startTime": 7.450881,
-            "stopTime": 12.8153725,
-            "annotationText": "ok",
-            "Categories": [
-            ]
-        },
-        {
-            "startTime": 13.7972031,
-            "stopTime": 20.9868736,
+            "startTime": 11.2541437,
+            "stopTime": 18.4438152,
             "annotationText": "PEDESTRIAN",
             "Categories": [
-            ]
+            ],
+            "type": "0",
+            "annotationVisualizationData": "[{\"x\":0.0,\"y\":0.0,\"z\":0.0},{\"x\":400.0,\"y\":0.0,\"z\":600.0}]"
         },
         {
-            "startTime": 3.78404522,
-            "stopTime": 6.052454,
-            "annotationText": "Pedestrian approaches road",
+            "startTime": 0.8478285,
+            "stopTime": 3.41954017,
+            "annotationText": "Test Forward Linerender",
             "Categories": [
-            ]
+            ],
+            "type": "forwardline",
+            "annotationVisualizationData": null
         }
     ],
     "scenarioLength": 22.6840878,

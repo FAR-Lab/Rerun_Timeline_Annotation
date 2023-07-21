@@ -8,7 +8,6 @@ using Rerun;
 using UltimateReplay.Storage;
 using UltimateReplay;
 using UltimateReplay.Statistics;
-using System.Linq;
 
 public struct AnnotationData
 {
@@ -76,6 +75,8 @@ public class timeline : MonoBehaviour
     //NEW TEST STUFF
     private Dictionary<AnnotationType, GameObject> annotationPrefabs;
     public GameObject TESTSUBJECT;
+    private Dictionary<Guid, GameObject> m_instantiatedObjects = new Dictionary<Guid, GameObject>();
+    private HashSet<Guid> instantiatedAnnotations = new HashSet<Guid>();
     void Start()
     {
         rerunManager = transform.parent.parent.parent.parent.gameObject;
@@ -99,15 +100,14 @@ public class timeline : MonoBehaviour
         //NEW TEST STUFF
         annotationPrefabs = new Dictionary<AnnotationType, GameObject>
         {
-            {AnnotationType.twopointline, Resources.Load<GameObject>("LinePrefab") }
+            {AnnotationType.twopointline, Resources.Load<GameObject>("LinePrefab") },
+            {AnnotationType.forwardline, Resources.Load<GameObject>("LinePrefab") }
         };
-        InitializeTestLineRenderer();
-        InitializeTestForwardLineRenderer();
 
     }
 
     //NEW TEST STUFF
-    public void InitializeTestLineRenderer()
+/*    public void InitializeTestLineRenderer(AnnotationData annotationData)
     {
         Vector3 startPoint = TESTSUBJECT.transform.position;
         Vector3 endPoint = startPoint + TESTSUBJECT.transform.forward * 500;
@@ -117,58 +117,68 @@ public class timeline : MonoBehaviour
 
         string visualizationData = JsonConvert.SerializeObject(new[] { serializableStartPoint, serializableEndPoint });
 
-        AnnotationData lineAnnotation = new AnnotationData
+*//*        AnnotationData lineAnnotation = new AnnotationData
         {
-            startTime = 0,
-            stopTime = 10,
-            annotationText = "Test Two Point Linerender",
-            Categories = null,
+            startTime = annotationData.startTime,
+            stopTime = annotationData.stopTime,
+            annotationText = annotationData.annotationText,
+            Categories = annotationData.Categories,
             type = AnnotationType.twopointline,
             annotationVisualizationData = visualizationData
         };
 
-        m_allAnnotations.Add(System.Guid.NewGuid(), lineAnnotation);
-        InstantiateLineRenderer(lineAnnotation, "TwoPoint");
-    }
+        m_allAnnotations.Add(System.Guid.NewGuid(), lineAnnotation);*/
+/*        InstantiateLineRenderer(annotationData, "0");
+*//*    }
 
-    public void InitializeTestForwardLineRenderer()
+    public void InitializeTestForwardLineRenderer(AnnotationData annotationData)
     {
-        AnnotationData forwardLine = new AnnotationData
+*//*        AnnotationData forwardLine = new AnnotationData
         {
-            startTime = 0,
-            stopTime = 5,
-            annotationText = "Forward Linerender",
-            Categories = null,
-            type = AnnotationType.forwardline,
+            startTime = annotationData.startTime,
+            stopTime = annotationData.stopTime,
+            annotationText = annotationData.annotationText,
+            Categories = annotationData.Categories,
+            type = annotationData.type,
         };
 
-        m_allAnnotations.Add(System.Guid.NewGuid(), forwardLine);
-        InstantiateLineRenderer(forwardLine, "Forward");
-    }
-    private void InstantiateLineRenderer(AnnotationData annotationData, string Type)
+        m_allAnnotations.Add(System.Guid.NewGuid(), forwardLine);*/
+ /*       InstantiateLineRenderer(annotationData, "1");*//*
+    }*/
+    public void InstantiateLineRenderer(Guid guid, AnnotationData annotationData)
     {
-
-        if (Type.Equals("TwoPoint"))
+        if (annotationData.type == AnnotationType.twopointline && annotationData.annotationVisualizationData != null) // Type 0 is twopoint
         {
+            Debug.Log("Type 0 instantiate code run");
             // Instantiate the line renderer prefab
             GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.twopointline]);
+            m_instantiatedObjects.Add(guid, lineObject);
             // Get the line renderer component
             LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
             // Parse the annotation visualization data into Vector3
             Vector3[] points = JsonConvert.DeserializeObject<Vector3[]>(annotationData.annotationVisualizationData);
+            Debug.Log(points[0]);
+            Debug.Log(points[1]);
             // Set the line renderer positions
             lineRenderer.SetPosition(0, points[0]);
             lineRenderer.SetPosition(1, points[1]);
         }
-        if (Type.Equals("Forward"))
+        else if (annotationData.type == AnnotationType.forwardline) 
         {
+            Debug.Log("Type 1 instantiate code run");
             // Instantiate the line renderer prefab
             GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
+            m_instantiatedObjects.Add(guid, lineObject);
             // Get the line renderer component
             LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
             lineObject.transform.SetParent(TESTSUBJECT.transform);
             lineRenderer.SetPosition(0, TESTSUBJECT.transform.position);
             lineRenderer.SetPosition(1, TESTSUBJECT.transform.forward * 50);
+        }
+        else
+        {
+            Debug.Log("Nothing");
+            return;
         }
     }
 
@@ -199,7 +209,7 @@ public class timeline : MonoBehaviour
         }
 
         //Delete an Annotation
-        if (Input.GetKeyDown(KeyCode.D) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
+        if (Input.GetKeyDown(KeyCode.Q) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
         {
             DeleteMode = !DeleteMode;
         }
@@ -218,7 +228,29 @@ public class timeline : MonoBehaviour
         }
 
 
+        foreach (KeyValuePair<Guid, AnnotationData> anno in m_allAnnotations)
+        {
+            localCurrentTime = rerunManager.GetComponent<RerunGUI>().currentTimeInFloat;
+            if (((localCurrentTime < anno.Value.stopTime) && (localCurrentTime > anno.Value.startTime)))
+            {
+                if (!instantiatedAnnotations.Contains(anno.Key))
+                {
+                    InstantiateLineRenderer(anno.Key, anno.Value);
+                    instantiatedAnnotations.Add(anno.Key);
+                }
+            }
 
+            if ((m_instantiatedObjects.ContainsKey(anno.Key) && localCurrentTime < anno.Value.startTime) || (m_instantiatedObjects.ContainsKey(anno.Key) && localCurrentTime > anno.Value.stopTime))
+            {
+                if (m_instantiatedObjects.ContainsKey(anno.Key))
+                {
+                    GameObject GO = m_instantiatedObjects[anno.Key];
+                    Destroy(GO);
+                    m_instantiatedObjects.Remove(anno.Key);
+                    instantiatedAnnotations.Remove(anno.Key);
+                }
+            }
+        }
     }
 
 

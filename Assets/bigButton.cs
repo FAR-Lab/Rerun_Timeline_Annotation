@@ -112,7 +112,8 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
             stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
-            Categories = new List<string>()
+            Categories = new List<string>(),
+            type = data.type
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
