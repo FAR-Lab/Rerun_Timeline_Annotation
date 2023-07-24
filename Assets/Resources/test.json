@@ -1,1 +1,34 @@
-{"jsonAnnotations":[{"startTime":8.156763,"stopTime":15.3464346,"annotationText":"NO RAYS","Categories":[],"type":0,"annotationVisualizationData":null},{"startTime":1.48138356,"stopTime":4.05309534,"annotationText":"Test Forward Linerender","Categories":[],"type":1,"annotationVisualizationData":null},{"startTime":16.4372349,"stopTime":18.7056427,"annotationText":"NO RAYS","Categories":[],"type":0,"annotationVisualizationData":null}],"scenarioLength":22.6840878,"scenarioName":"silly","currentTime":0.0}
+{
+    "jsonAnnotations": [
+        {
+            "startTime": 8.156763,
+            "stopTime": 15.3464346,
+            "annotationText": "NO RAYS",
+            "Categories": [
+            ],
+            "type": 0,
+            "annotationVisualizationData": null
+        },
+        {
+            "startTime": 1.48138356,
+            "stopTime": 4.05309534,
+            "annotationText": "Test Forward Linerender",
+            "Categories": [
+            ],
+            "type": 2,
+            "annotationVisualizationData": null
+        },
+        {
+            "startTime": 16.4372349,
+            "stopTime": 18.7056427,
+            "annotationText": "NO RAYS",
+            "Categories": [
+            ],
+            "type": 1,
+            "annotationVisualizationData": null
+        }
+    ],
+    "scenarioLength": 22.6840878,
+    "scenarioName": "silly",
+    "currentTime": 0.0
+}

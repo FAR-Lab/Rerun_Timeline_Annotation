@@ -48,7 +48,7 @@ public struct SerializableVector3
     }
 }
 
-public enum AnnotationType { twopointline, forwardline, twoobjectline, text, box, sphere}
+public enum AnnotationType { none, twopointline, forwardline, twoobjectline, text, box, sphere}
 public class timeline : MonoBehaviour
 {
     Dictionary<Guid, AnnotationData> m_allAnnotations;
@@ -108,46 +108,6 @@ public class timeline : MonoBehaviour
         };
 
     }
-
-    //NEW TEST STUFF
-/*    public void InitializeTestLineRenderer(AnnotationData annotationData)
-    {
-        Vector3 startPoint = TESTSUBJECT.transform.position;
-        Vector3 endPoint = startPoint + TESTSUBJECT.transform.forward * 500;
-
-        SerializableVector3 serializableStartPoint = new SerializableVector3(startPoint);
-        SerializableVector3 serializableEndPoint = new SerializableVector3(endPoint);
-
-        string visualizationData = JsonConvert.SerializeObject(new[] { serializableStartPoint, serializableEndPoint });
-
-*//*        AnnotationData lineAnnotation = new AnnotationData
-        {
-            startTime = annotationData.startTime,
-            stopTime = annotationData.stopTime,
-            annotationText = annotationData.annotationText,
-            Categories = annotationData.Categories,
-            type = AnnotationType.twopointline,
-            annotationVisualizationData = visualizationData
-        };
-
-        m_allAnnotations.Add(System.Guid.NewGuid(), lineAnnotation);*/
-/*        InstantiateLineRenderer(annotationData, "0");
-*//*    }
-
-    public void InitializeTestForwardLineRenderer(AnnotationData annotationData)
-    {
-*//*        AnnotationData forwardLine = new AnnotationData
-        {
-            startTime = annotationData.startTime,
-            stopTime = annotationData.stopTime,
-            annotationText = annotationData.annotationText,
-            Categories = annotationData.Categories,
-            type = annotationData.type,
-        };
-
-        m_allAnnotations.Add(System.Guid.NewGuid(), forwardLine);*/
- /*       InstantiateLineRenderer(annotationData, "1");*//*
-    }*/
     public void InstantiateLineRenderer(Guid guid, AnnotationData annotationData)
     {
         if (annotationData.type == AnnotationType.twopointline && annotationData.annotationVisualizationData != null) // Type 0 is twopoint
@@ -166,7 +126,7 @@ public class timeline : MonoBehaviour
         }
         else if (annotationData.type == AnnotationType.forwardline) 
         {
-            Debug.Log("Type 1 instantiate code run");
+            Debug.Log("INSTANTIATING FORWARD LINE");
             // Instantiate the line renderer prefab
             GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
             m_instantiatedObjects.Add(guid, lineObject);
@@ -230,58 +190,6 @@ public class timeline : MonoBehaviour
             ReInitalizeAllAnnotations();
         }
 
-        if (Input.GetKeyDown(KeyCode.M) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
-        {
-            m_allAnnotations.Add(System.Guid.NewGuid(), new AnnotationData
-            {
-                startTime = 0,
-                stopTime = localLength / 10,
-                annotationText = "Double click to edit...",
-                Categories = null,
-                type = AnnotationType.forwardline,
-                annotationVisualizationData = null
-            });
-
-            ReInitalizeAllAnnotations();
-        }
-
-
-        if (Input.GetKeyDown(KeyCode.Comma) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
-        {
-            Vector3 startPoint = TESTSUBJECT.transform.position;
-            Vector3 endPoint = new Vector3(10,5,5);
-
-            SerializableVector3 serializableStartPoint = new SerializableVector3(startPoint);
-            SerializableVector3 serializableEndPoint = new SerializableVector3(endPoint);
-
-            string visualizationData = JsonConvert.SerializeObject(new[] { serializableStartPoint, serializableEndPoint });
-            m_allAnnotations.Add(System.Guid.NewGuid(), new AnnotationData
-            {
-                startTime = 0,
-                stopTime = localLength / 10,
-                annotationText = "Double click to edit...",
-                Categories = null,
-                type = AnnotationType.twopointline,
-                annotationVisualizationData = visualizationData
-            });
-
-            ReInitalizeAllAnnotations();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Period) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
-        {
-            m_allAnnotations.Add(System.Guid.NewGuid(), new AnnotationData
-            {
-                startTime = 0,
-                stopTime = localLength / 10,
-                annotationText = "Double click to edit...",
-                Categories = null,
-                type = AnnotationType.twoobjectline,
-                annotationVisualizationData = null
-            }) ;
-
-            ReInitalizeAllAnnotations();
-        }
         //Delete an Annotation
         if (Input.GetKeyDown(KeyCode.Q) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
         {
@@ -307,6 +215,7 @@ public class timeline : MonoBehaviour
             localCurrentTime = rerunManager.GetComponent<RerunGUI>().currentTimeInFloat;
             if (((localCurrentTime < anno.Value.stopTime) && (localCurrentTime > anno.Value.startTime)))
             {
+                Debug.Log(instantiatedAnnotations.Contains(anno.Key));
                 if (!instantiatedAnnotations.Contains(anno.Key))
                 {
                     InstantiateLineRenderer(anno.Key, anno.Value);
@@ -314,15 +223,17 @@ public class timeline : MonoBehaviour
                 }
             }
 
-            if ((m_instantiatedObjects.ContainsKey(anno.Key) && localCurrentTime < anno.Value.startTime) || (m_instantiatedObjects.ContainsKey(anno.Key) && localCurrentTime > anno.Value.stopTime))
+            if (localCurrentTime < anno.Value.startTime || localCurrentTime > anno.Value.stopTime)
             {
                 if (m_instantiatedObjects.ContainsKey(anno.Key))
                 {
-                    GameObject GO = m_instantiatedObjects[anno.Key];
-                    Destroy(GO);
-                    m_instantiatedObjects.Remove(anno.Key);
-                    instantiatedAnnotations.Remove(anno.Key);
+
+                        GameObject GO = m_instantiatedObjects[anno.Key];
+                        Destroy(GO);
+                        m_instantiatedObjects.Remove(anno.Key);
                 }
+                instantiatedAnnotations.Remove(anno.Key);
+
             }
         }
     }
@@ -340,6 +251,10 @@ public class timeline : MonoBehaviour
             var t = Instantiate(AnnotationPrefab, transform);
             AllInstatiatedAnnotations.Add(t);
             t.GetComponent<bigButton>().InitilizeData(anno.Value, anno.Key);
+            if (anno.Value.type == AnnotationType.forwardline) { t.GetComponentInChildren<editorScript>().dropdown.value = 1; }
+            if (anno.Value.type == AnnotationType.twopointline) { t.GetComponentInChildren<editorScript>().dropdown.value = 2; }
+            t.GetComponentInChildren<editorScript>().inputText.text = anno.Value.annotationText;
+
         }
 
     }

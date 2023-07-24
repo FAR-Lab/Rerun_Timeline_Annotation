@@ -279,7 +279,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   editor: {fileID: 185434528221237309}
   RerunManager: {fileID: 1965292541504404560, guid: dd4df14fc7231b348bb6283006b3546f, type: 3}
-  forwardlineToggle: {fileID: 2698253608358403517}
 --- !u!114 &7402564024640634072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -881,7 +880,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 804160674146590922, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 140
+      value: 175
       objectReference: {fileID: 0}
     - target: {fileID: 804160674146590922, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -913,11 +912,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 804160674146590922, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 75
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 804160674146590922, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 150
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 804160674146590922, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -929,6 +928,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 804160674146590922, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2481796766530083120, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2686166064989825489, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
@@ -951,24 +954,31 @@ PrefabInstance:
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: UnityEditor.MonoScript, UnityEditor.CoreModule
       objectReference: {fileID: 0}
+    - target: {fileID: 3857880830628396474, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4302428413337388081, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6943742626717689781, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7217576380198022452, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_Name
       value: AnnotationEditor
       objectReference: {fileID: 0}
     - target: {fileID: 7846219633634369653, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
       propertyPath: m_text
-      value: abc
+      value: "\u200B"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
 --- !u!1 &185434528221237309 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7217576380198022452, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
-  m_PrefabInstance: {fileID: 7402564025370541321}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &2698253608358403517 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4884487630124064948, guid: c64b76f45e86ae54e81903f4d78085e7, type: 3}
   m_PrefabInstance: {fileID: 7402564025370541321}
   m_PrefabAsset: {fileID: 0}
 --- !u!224 &7895869104984382915 stripped

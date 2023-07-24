@@ -119,4 +119,19 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
+
+    public void setAnnoAsForwardline()
+    {
+
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = AnnotationType.forwardline,
+            annotationVisualizationData = data.annotationVisualizationData
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
 }  
