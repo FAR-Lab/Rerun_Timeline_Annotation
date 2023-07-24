@@ -48,7 +48,7 @@ public struct SerializableVector3
     }
 }
 
-public enum AnnotationType { twopointline, forwardline, text, box, sphere, ray}
+public enum AnnotationType { twopointline, forwardline, twoobjectline, text, box, sphere}
 public class timeline : MonoBehaviour
 {
     Dictionary<Guid, AnnotationData> m_allAnnotations;
@@ -75,6 +75,8 @@ public class timeline : MonoBehaviour
     //NEW TEST STUFF
     private Dictionary<AnnotationType, GameObject> annotationPrefabs;
     public GameObject TESTSUBJECT;
+    public GameObject trackedObj1;
+    public GameObject trackedObj2;
     private Dictionary<Guid, GameObject> m_instantiatedObjects = new Dictionary<Guid, GameObject>();
     private HashSet<Guid> instantiatedAnnotations = new HashSet<Guid>();
     void Start()
@@ -101,7 +103,8 @@ public class timeline : MonoBehaviour
         annotationPrefabs = new Dictionary<AnnotationType, GameObject>
         {
             {AnnotationType.twopointline, Resources.Load<GameObject>("LinePrefab") },
-            {AnnotationType.forwardline, Resources.Load<GameObject>("LinePrefab") }
+            {AnnotationType.forwardline, Resources.Load<GameObject>("LinePrefab") },
+            {AnnotationType.twoobjectline, Resources.Load<GameObject>("LinePrefab") }
         };
 
     }
@@ -157,8 +160,6 @@ public class timeline : MonoBehaviour
             LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
             // Parse the annotation visualization data into Vector3
             Vector3[] points = JsonConvert.DeserializeObject<Vector3[]>(annotationData.annotationVisualizationData);
-            Debug.Log(points[0]);
-            Debug.Log(points[1]);
             // Set the line renderer positions
             lineRenderer.SetPosition(0, points[0]);
             lineRenderer.SetPosition(1, points[1]);
@@ -174,6 +175,25 @@ public class timeline : MonoBehaviour
             lineObject.transform.SetParent(TESTSUBJECT.transform);
             lineRenderer.SetPosition(0, TESTSUBJECT.transform.position);
             lineRenderer.SetPosition(1, TESTSUBJECT.transform.forward * 50);
+        }
+        else if (annotationData.type == AnnotationType.twoobjectline)
+        {
+            if (trackedObj1 != null && trackedObj2 != null)
+            {
+                Debug.Log("Type 2 instantiate code run");
+                // Instantiate the line renderer prefab
+                GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
+                m_instantiatedObjects.Add(guid, lineObject);
+                // Get the line renderer component
+                LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
+                lineObject.transform.SetParent(trackedObj1.transform);
+                lineRenderer.SetPosition(0, trackedObj1.transform.position);
+                lineRenderer.SetPosition(1, trackedObj2.transform.position);
+            }
+            else
+            {
+                Debug.LogError("Tracked Obect 1 and/or Tracked Object 2 not added in inspector! under timeline.cs");
+            }
         }
         else
         {
@@ -191,7 +211,7 @@ public class timeline : MonoBehaviour
         //ReInitialize Annotations
         if (Input.GetKeyUp(KeyCode.Space) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
         {
-            ReInitalizeAllAnnotations();
+            ReInitalizeAllAnnotations();    
         }
 
         //Create New Annotation
@@ -202,12 +222,66 @@ public class timeline : MonoBehaviour
                 startTime = 0,
                 stopTime = localLength / 10,
                 annotationText = "Double click to edit...",
-                Categories = null
+                Categories = null,
+                type = 0,
+                annotationVisualizationData = null
             });
 
             ReInitalizeAllAnnotations();
         }
 
+        if (Input.GetKeyDown(KeyCode.M) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
+        {
+            m_allAnnotations.Add(System.Guid.NewGuid(), new AnnotationData
+            {
+                startTime = 0,
+                stopTime = localLength / 10,
+                annotationText = "Double click to edit...",
+                Categories = null,
+                type = AnnotationType.forwardline,
+                annotationVisualizationData = null
+            });
+
+            ReInitalizeAllAnnotations();
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.Comma) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
+        {
+            Vector3 startPoint = TESTSUBJECT.transform.position;
+            Vector3 endPoint = new Vector3(10,5,5);
+
+            SerializableVector3 serializableStartPoint = new SerializableVector3(startPoint);
+            SerializableVector3 serializableEndPoint = new SerializableVector3(endPoint);
+
+            string visualizationData = JsonConvert.SerializeObject(new[] { serializableStartPoint, serializableEndPoint });
+            m_allAnnotations.Add(System.Guid.NewGuid(), new AnnotationData
+            {
+                startTime = 0,
+                stopTime = localLength / 10,
+                annotationText = "Double click to edit...",
+                Categories = null,
+                type = AnnotationType.twopointline,
+                annotationVisualizationData = visualizationData
+            });
+
+            ReInitalizeAllAnnotations();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Period) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
+        {
+            m_allAnnotations.Add(System.Guid.NewGuid(), new AnnotationData
+            {
+                startTime = 0,
+                stopTime = localLength / 10,
+                annotationText = "Double click to edit...",
+                Categories = null,
+                type = AnnotationType.twoobjectline,
+                annotationVisualizationData = null
+            }) ;
+
+            ReInitalizeAllAnnotations();
+        }
         //Delete an Annotation
         if (Input.GetKeyDown(KeyCode.Q) && !rerunManager.GetComponentInParent<RerunInputManager>().InputOpen)
         {
@@ -266,7 +340,6 @@ public class timeline : MonoBehaviour
             var t = Instantiate(AnnotationPrefab, transform);
             AllInstatiatedAnnotations.Add(t);
             t.GetComponent<bigButton>().InitilizeData(anno.Value, anno.Key);
-
         }
 
     }
@@ -329,13 +402,13 @@ public class timeline : MonoBehaviour
 
                     }
                     //BROKEN, currently just press space to fix
-                    /*                    if(!CheckOverlap(transform.GetChild(i).gameObject, transform.GetChild(j).gameObject))
-                                        {
-                                            transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta.x, 28);
-                                            transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition.x, 0);
-                                            transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta.x, 28);
-                                            transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition.x, 0);
-                                        }*/
+                        /*                    if(!CheckOverlap(transform.GetChild(i).gameObject, transform.GetChild(j).gameObject))
+                                            {
+                                                transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta.x, 28);
+                                                transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition.x, 0);
+                                                transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta.x, 28);
+                                                transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition.x, 0);
+                                            }*/
                 }
             }
         }

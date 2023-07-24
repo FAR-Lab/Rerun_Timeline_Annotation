@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using Unity.UI;
+using UnityEngine.UI;
 using TMPro;
 using System;
 using Rerun;
@@ -107,13 +107,15 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
     }
     public void updateTimesBasedOnPosition()
     {
+
         data = new AnnotationData
         {
             startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
             stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
             Categories = new List<string>(),
-            type = data.type
+            type = data.type,
+            annotationVisualizationData = data.annotationVisualizationData
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }

@@ -133,9 +133,8 @@ public class resizeSide : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDr
             case resizeSliderPosition.BIGBUTTON:
                 LargeButtonTransform.GetComponent<bigButton>().updateTimesBasedOnPosition();
                 break;
-
-
         };
+
     }
 
     void Update()
