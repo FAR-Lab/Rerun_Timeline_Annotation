@@ -134,4 +134,45 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
+    public void setAnnoAsDefault()
+    {
+
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = AnnotationType.none,
+            annotationVisualizationData = data.annotationVisualizationData
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
+    public void setAnnoAsTwoObjLine()
+    {
+
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = AnnotationType.twoobjectline,
+            annotationVisualizationData = data.annotationVisualizationData
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
+    public void setAnnoVisualizationData(string visualizationText)
+    {
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = data.type,
+            annotationVisualizationData = visualizationText
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
 }  

@@ -48,7 +48,7 @@ public struct SerializableVector3
     }
 }
 
-public enum AnnotationType { none, twopointline, forwardline, twoobjectline, text, box, sphere}
+public enum AnnotationType { none, twoobjectline, forwardline, text, box, sphere}
 public class timeline : MonoBehaviour
 {
     Dictionary<Guid, AnnotationData> m_allAnnotations;
@@ -74,7 +74,6 @@ public class timeline : MonoBehaviour
 
     //NEW TEST STUFF
     private Dictionary<AnnotationType, GameObject> annotationPrefabs;
-    public GameObject TESTSUBJECT;
     public GameObject trackedObj1;
     public GameObject trackedObj2;
     private Dictionary<Guid, GameObject> m_instantiatedObjects = new Dictionary<Guid, GameObject>();
@@ -102,45 +101,17 @@ public class timeline : MonoBehaviour
         //NEW TEST STUFF
         annotationPrefabs = new Dictionary<AnnotationType, GameObject>
         {
-            {AnnotationType.twopointline, Resources.Load<GameObject>("LinePrefab") },
+            {AnnotationType.twoobjectline, Resources.Load<GameObject>("LinePrefab") },
             {AnnotationType.forwardline, Resources.Load<GameObject>("LinePrefab") },
-            {AnnotationType.twoobjectline, Resources.Load<GameObject>("LinePrefab") }
         };
 
     }
     public void InstantiateLineRenderer(Guid guid, AnnotationData annotationData)
     {
-        if (annotationData.type == AnnotationType.twopointline && annotationData.annotationVisualizationData != null) // Type 0 is twopoint
-        {
-            Debug.Log("Type 0 instantiate code run");
-            // Instantiate the line renderer prefab
-            GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.twopointline]);
-            m_instantiatedObjects.Add(guid, lineObject);
-            // Get the line renderer component
-            LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
-            // Parse the annotation visualization data into Vector3
-            Vector3[] points = JsonConvert.DeserializeObject<Vector3[]>(annotationData.annotationVisualizationData);
-            // Set the line renderer positions
-            lineRenderer.SetPosition(0, points[0]);
-            lineRenderer.SetPosition(1, points[1]);
-        }
-        else if (annotationData.type == AnnotationType.forwardline) 
-        {
-            Debug.Log("INSTANTIATING FORWARD LINE");
-            // Instantiate the line renderer prefab
-            GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
-            m_instantiatedObjects.Add(guid, lineObject);
-            // Get the line renderer component
-            LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
-            lineObject.transform.SetParent(TESTSUBJECT.transform);
-            lineRenderer.SetPosition(0, TESTSUBJECT.transform.position);
-            lineRenderer.SetPosition(1, TESTSUBJECT.transform.forward * 50);
-        }
-        else if (annotationData.type == AnnotationType.twoobjectline)
+        if (annotationData.type == AnnotationType.twoobjectline && annotationData.annotationVisualizationData != null) 
         {
             if (trackedObj1 != null && trackedObj2 != null)
             {
-                Debug.Log("Type 2 instantiate code run");
                 // Instantiate the line renderer prefab
                 GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
                 m_instantiatedObjects.Add(guid, lineObject);
@@ -154,6 +125,17 @@ public class timeline : MonoBehaviour
             {
                 Debug.LogError("Tracked Obect 1 and/or Tracked Object 2 not added in inspector! under timeline.cs");
             }
+        }
+        else if (annotationData.type == AnnotationType.forwardline && annotationData.annotationVisualizationData != null) 
+        {
+            // Instantiate the line renderer prefab
+            GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
+            m_instantiatedObjects.Add(guid, lineObject);
+            // Get the line renderer component
+            LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
+            lineObject.transform.SetParent(GameObject.Find(annotationData.annotationVisualizationData).transform);
+            lineRenderer.SetPosition(0, GameObject.Find(annotationData.annotationVisualizationData).transform.position);
+            lineRenderer.SetPosition(1, GameObject.Find(annotationData.annotationVisualizationData).transform.forward * 50);
         }
         else
         {
@@ -215,8 +197,7 @@ public class timeline : MonoBehaviour
             localCurrentTime = rerunManager.GetComponent<RerunGUI>().currentTimeInFloat;
             if (((localCurrentTime < anno.Value.stopTime) && (localCurrentTime > anno.Value.startTime)))
             {
-                Debug.Log(instantiatedAnnotations.Contains(anno.Key));
-                if (!instantiatedAnnotations.Contains(anno.Key))
+                    if (!instantiatedAnnotations.Contains(anno.Key))
                 {
                     InstantiateLineRenderer(anno.Key, anno.Value);
                     instantiatedAnnotations.Add(anno.Key);
@@ -251,8 +232,9 @@ public class timeline : MonoBehaviour
             var t = Instantiate(AnnotationPrefab, transform);
             AllInstatiatedAnnotations.Add(t);
             t.GetComponent<bigButton>().InitilizeData(anno.Value, anno.Key);
+            if (anno.Value.type == AnnotationType.none) { t.GetComponentInChildren<editorScript>().dropdown.value = 0; }
             if (anno.Value.type == AnnotationType.forwardline) { t.GetComponentInChildren<editorScript>().dropdown.value = 1; }
-            if (anno.Value.type == AnnotationType.twopointline) { t.GetComponentInChildren<editorScript>().dropdown.value = 2; }
+            if (anno.Value.type == AnnotationType.twoobjectline) { t.GetComponentInChildren<editorScript>().dropdown.value = 2; }
             t.GetComponentInChildren<editorScript>().inputText.text = anno.Value.annotationText;
 
         }

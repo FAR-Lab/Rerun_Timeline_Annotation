@@ -1726,7 +1726,7 @@ GameObject:
   - component: {fileID: 4810078245988084947}
   - component: {fileID: 3598364189224693491}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TwoObjTMP1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3177,7 +3177,7 @@ GameObject:
   - component: {fileID: 422772065441637587}
   - component: {fileID: 551484579415340007}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: TwoObjTMP2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3739,6 +3739,15 @@ MonoBehaviour:
   dropdown: {fileID: 2461301194355725451}
   ForwardLineUIElement: {fileID: 4774445519504292251}
   TwoObjectLineUIElement: {fileID: 7309754724972444589}
+  selectButton: {fileID: 6309520586040583304}
+  selectButton1: {fileID: 1448536805378524575}
+  selectButton2: {fileID: 8809865723781321742}
+  renderCamera: {fileID: 0}
+  rawImageDisplay: {fileID: 0}
+  selectedObj: {fileID: 0}
+  selectedObj1: {fileID: 0}
+  selectedObj2: {fileID: 0}
+  select: 0
 --- !u!114 &8435105105452453480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4736,7 +4745,7 @@ GameObject:
   - component: {fileID: 231183077789930073}
   - component: {fileID: 6961534529685876028}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: ForwardTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
