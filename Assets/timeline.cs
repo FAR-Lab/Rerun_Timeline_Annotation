@@ -297,11 +297,10 @@ public class timeline : MonoBehaviour
                 {
                     if (CheckOverlap(transform.GetChild(i).gameObject, transform.GetChild(j).gameObject))
                     {
-                        transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta.x, 14);
-                        transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition.x, 10);
-                        transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta.x, 14);
-                        transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition.x, -10);
-
+                        transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().sizeDelta.x, 28);
+                        transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(i).gameObject.GetComponent<RectTransform>().anchoredPosition.x, 20);
+                        transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().sizeDelta.x, 28);
+                        transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition = new Vector2(transform.GetChild(j).gameObject.GetComponent<RectTransform>().anchoredPosition.x, -20);
                     }
                     //BROKEN, currently just press space to fix
                         /*                    if(!CheckOverlap(transform.GetChild(i).gameObject, transform.GetChild(j).gameObject))
