@@ -15,11 +15,12 @@ public class editorScript : MonoBehaviour
     public GameObject TwoObjectLineUIElement;
 
     //For selecting GameObject in select mode
-    public Button selectButton;
-    public Button selectButton1;
+    public Button selectButton; //drag the three select buttons under ForwardLineSelector and TwoObjectSelector into here
+    public Button selectButton1; 
     public Button selectButton2;
-    public Camera renderCamera;
-    public RawImage rawImageDisplay;
+    public Slider mySlider;
+    [HideInInspector]public Camera renderCamera;
+    [HideInInspector]public RawImage rawImageDisplay;
     [HideInInspector] public GameObject selectedObj1 = null;
     [HideInInspector] public GameObject selectedObj2 = null;
     private bool isSelecting;
@@ -40,6 +41,10 @@ public class editorScript : MonoBehaviour
         renderCamera = GameObject.Find("RerunManager").GetComponent<Camera>();
         rawImageDisplay = GameObject.Find("Display_Camera_4").GetComponent<RawImage>();
 
+        mySlider.minValue = 1;
+        mySlider.maxValue = 100;
+        mySlider.value = 50;
+        this.gameObject.GetComponentInParent<timeline>().sliderValueFromEditor = mySlider.value;
     }
 
     void DropdownValueChanged(TMP_Dropdown change)
@@ -117,7 +122,10 @@ public class editorScript : MonoBehaviour
     {
         this.gameObject.transform.parent.GetComponentInChildren<TMP_Text>().text = inputText.text;
         this.gameObject.GetComponentInParent<bigButton>().updateTimesBasedOnPosition();
-
+        if (mySlider.IsActive())
+        {
+            this.gameObject.GetComponentInParent<timeline>().sliderValueFromEditor = mySlider.value;
+        }
         selectGO();
 
     }

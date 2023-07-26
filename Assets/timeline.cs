@@ -29,6 +29,7 @@ public struct timelineData
     public float currentTime;
     
 }
+
 public struct SerializableVector3
 {
     public float X;
@@ -71,11 +72,12 @@ public class timeline : MonoBehaviour
     [HideInInspector]
     public bool DeleteMode;
 
+    private LineRenderer line;
+    [HideInInspector] public float sliderValueFromEditor = 50;
+
 
     //NEW TEST STUFF
     private Dictionary<AnnotationType, GameObject> annotationPrefabs;
-    public GameObject trackedObj1;
-    public GameObject trackedObj2;
     private Dictionary<Guid, GameObject> m_instantiatedObjects = new Dictionary<Guid, GameObject>();
     private HashSet<Guid> instantiatedAnnotations = new HashSet<Guid>();
     void Start()
@@ -106,25 +108,16 @@ public class timeline : MonoBehaviour
         };
 
     }
-    public void InstantiateLineRenderer(Guid guid, AnnotationData annotationData)
+    public LineRenderer InstantiateLineRenderer(Guid guid, AnnotationData annotationData)
     {
         if (annotationData.type == AnnotationType.twoobjectline && annotationData.annotationVisualizationData != null) 
         {
-            if (trackedObj1 != null && trackedObj2 != null)
-            {
-                // Instantiate the line renderer prefab
-                GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
-                m_instantiatedObjects.Add(guid, lineObject);
-                // Get the line renderer component
-                LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
-                lineObject.transform.SetParent(trackedObj1.transform);
-                lineRenderer.SetPosition(0, trackedObj1.transform.position);
-                lineRenderer.SetPosition(1, trackedObj2.transform.position);
-            }
-            else
-            {
-                Debug.LogError("Tracked Obect 1 and/or Tracked Object 2 not added in inspector! under timeline.cs");
-            }
+            // Instantiate the line renderer prefab
+            GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.twoobjectline]);
+            m_instantiatedObjects.Add(guid, lineObject);
+            // Get the line renderer component
+            LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
+            return lineRenderer;
         }
         else if (annotationData.type == AnnotationType.forwardline && annotationData.annotationVisualizationData != null) 
         {
@@ -135,13 +128,9 @@ public class timeline : MonoBehaviour
             LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
             lineObject.transform.SetParent(GameObject.Find(annotationData.annotationVisualizationData).transform);
             lineRenderer.SetPosition(0, GameObject.Find(annotationData.annotationVisualizationData).transform.position);
-            lineRenderer.SetPosition(1, GameObject.Find(annotationData.annotationVisualizationData).transform.forward * 50);
+            return lineRenderer;
         }
-        else
-        {
-            Debug.Log("Nothing");
-            return;
-        }
+        else { return null; }
     }
 
     // Update is called once per frame
@@ -197,10 +186,26 @@ public class timeline : MonoBehaviour
             localCurrentTime = rerunManager.GetComponent<RerunGUI>().currentTimeInFloat;
             if (((localCurrentTime < anno.Value.stopTime) && (localCurrentTime > anno.Value.startTime)))
             {
-                    if (!instantiatedAnnotations.Contains(anno.Key))
+                if (!m_instantiatedObjects.ContainsKey(anno.Key))
                 {
-                    InstantiateLineRenderer(anno.Key, anno.Value);
-                    instantiatedAnnotations.Add(anno.Key);
+
+                    if (!instantiatedAnnotations.Contains(anno.Key))
+                    {
+                        line = InstantiateLineRenderer(anno.Key, anno.Value);
+                        instantiatedAnnotations.Add(anno.Key);
+                    }
+                }
+
+                //This is here so that the lineRenderer positions are in void Update()
+                if(anno.Value.type == AnnotationType.twoobjectline)
+                {
+                    Dictionary<string, string> deserializedData = JsonConvert.DeserializeObject<Dictionary<string, string>>(anno.Value.annotationVisualizationData);
+                    line.SetPosition(0, GameObject.Find(deserializedData["gameObjectName1"]).transform.position);
+                    line.SetPosition(1, GameObject.Find(deserializedData["gameObjectName2"]).transform.position);
+                }
+                if(anno.Value.type == AnnotationType.forwardline)
+                {
+                    line.SetPosition(1, GameObject.Find(anno.Value.annotationVisualizationData).transform.forward * sliderValueFromEditor);
                 }
             }
 

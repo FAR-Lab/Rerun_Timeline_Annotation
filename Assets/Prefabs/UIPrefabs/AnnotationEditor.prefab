@@ -3742,12 +3742,11 @@ MonoBehaviour:
   selectButton: {fileID: 6309520586040583304}
   selectButton1: {fileID: 1448536805378524575}
   selectButton2: {fileID: 8809865723781321742}
+  mySlider: {fileID: 2672213292379573345}
   renderCamera: {fileID: 0}
   rawImageDisplay: {fileID: 0}
-  selectedObj: {fileID: 0}
   selectedObj1: {fileID: 0}
   selectedObj2: {fileID: 0}
-  select: 0
 --- !u!114 &8435105105452453480
 MonoBehaviour:
   m_ObjectHideFlags: 0
