@@ -115,7 +115,9 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
             Categories = new List<string>(),
             type = data.type,
-            annotationVisualizationData = data.annotationVisualizationData
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = data.rectDrawing,
+            rectDimensions = data.rectDimensions
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
@@ -130,7 +132,9 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
             Categories = new List<string>(),
             type = AnnotationType.forwardline,
-            annotationVisualizationData = data.annotationVisualizationData
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = data.rectDrawing,
+            rectDimensions = data.rectDimensions
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
@@ -144,7 +148,9 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
             Categories = new List<string>(),
             type = AnnotationType.none,
-            annotationVisualizationData = data.annotationVisualizationData
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = data.rectDrawing,
+            rectDimensions = data.rectDimensions
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
@@ -158,7 +164,9 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
             Categories = new List<string>(),
             type = AnnotationType.twoobjectline,
-            annotationVisualizationData = data.annotationVisualizationData
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = data.rectDrawing,
+            rectDimensions = data.rectDimensions
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
@@ -171,7 +179,56 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
             Categories = new List<string>(),
             type = data.type,
-            annotationVisualizationData = visualizationText
+            annotationVisualizationData = visualizationText,
+            rectDrawing = data.rectDrawing,
+            rectDimensions = data.rectDimensions
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
+
+    public void setAnnoAsARectangle()
+    {
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = data.type,
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = RectangleType.ARectangle,
+            rectDimensions = data.rectDimensions
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
+
+    public void setAnnoAsBRectangle()
+    {
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = data.type,
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = RectangleType.BRectangle,
+            rectDimensions = data.rectDimensions
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
+    public void setAnnoAsNoRectangle()
+    {
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = data.type,
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = RectangleType.none,
+            rectDimensions = data.rectDimensions
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }

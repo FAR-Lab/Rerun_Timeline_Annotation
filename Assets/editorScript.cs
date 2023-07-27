@@ -5,12 +5,15 @@ using TMPro;
 using UnityEngine.UI;
 using Rerun;
 using Newtonsoft.Json;
+using System;
 
 public class editorScript : MonoBehaviour
 {
+    //this is disgusting ik
     //For dropdown selection of AnnotationType
     public TMP_InputField inputText;
-    public TMP_Dropdown dropdown;
+    public TMP_Dropdown lineRendererdropdown;
+    public TMP_Dropdown rectangleAnnoDropdown;
     public GameObject ForwardLineUIElement;
     public GameObject TwoObjectLineUIElement;
 
@@ -19,11 +22,16 @@ public class editorScript : MonoBehaviour
     public Button selectButton1; 
     public Button selectButton2;
     public Slider mySlider;
+    public GameObject rectangle;
     [HideInInspector]public Camera renderCamera;
     [HideInInspector]public RawImage rawImageDisplay;
     [HideInInspector] public GameObject selectedObj1 = null;
     [HideInInspector] public GameObject selectedObj2 = null;
     private bool isSelecting;
+    private List<GameObject> PanelList = new List<GameObject>();
+
+    private GameObject ARectangle;
+    private GameObject BRectangle;
 
     public struct GameObjectNames
     {
@@ -34,7 +42,8 @@ public class editorScript : MonoBehaviour
 
     void Start()
     {
-        dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(dropdown); });
+        lineRendererdropdown.onValueChanged.AddListener(delegate { lineDropdownValueChanged(lineRendererdropdown); });
+        rectangleAnnoDropdown.onValueChanged.AddListener(delegate { rectangleDropdownValueChanged(rectangleAnnoDropdown); });
         selectButton.onClick.AddListener(() => { isSelecting = true; });
         selectButton1.onClick.AddListener(() => { isSelecting = true; });
         selectButton2.onClick.AddListener(() => { isSelecting = true; });
@@ -47,7 +56,7 @@ public class editorScript : MonoBehaviour
         this.gameObject.GetComponentInParent<timeline>().sliderValueFromEditor = mySlider.value;
     }
 
-    void DropdownValueChanged(TMP_Dropdown change)
+    void lineDropdownValueChanged(TMP_Dropdown change)
     {
         switch (change.value)
         {
@@ -69,6 +78,31 @@ public class editorScript : MonoBehaviour
         }
     }
 
+    void rectangleDropdownValueChanged(TMP_Dropdown change)
+    {
+        switch (change.value)
+        {
+            case 0:
+                this.gameObject.GetComponentInParent<bigButton>().setAnnoAsNoRectangle();
+                break;
+            case 1:
+                this.gameObject.GetComponentInParent<bigButton>().setAnnoAsARectangle();
+                break;
+            case 2:
+                this.gameObject.GetComponentInParent<bigButton>().setAnnoAsBRectangle();
+                break;
+        }
+    }
+
+
+/*    public void changeASmalltoBig()
+    {
+        if (ARectangle != null)
+        {
+            ARectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2((Screen.width / 4 + ARectangle.GetComponent<RectTransform>().anchoredPosition.x), (Screen.height / 4 - ARectangle.GetComponent<RectTransform>().anchoredPosition.y));
+            ARectangle.GetComponent<RectTransform>().sizeDelta = ARectangle.GetComponent<RectTransform>().sizeDelta * 2;
+        }
+    }*/
     void selectGO()
     {
         if (Input.GetMouseButtonDown(0) && isSelecting)

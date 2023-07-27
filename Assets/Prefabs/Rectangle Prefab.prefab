@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2198957176142234021}
   - component: {fileID: 4682381658289562233}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Rectangle Prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

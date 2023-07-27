@@ -18,7 +18,9 @@ public struct AnnotationData
     public string annotationText;
     public List<string> Categories;
     public AnnotationType type;
-    public string annotationVisualizationData; //stores vector3s
+    public string annotationVisualizationData; //stores name of gameobject(s)
+    public RectangleType rectDrawing;
+    public string rectDimensions;
 }
 
 public struct timelineData
@@ -50,6 +52,7 @@ public struct SerializableVector3
 }
 
 public enum AnnotationType { none, twoobjectline, forwardline, text, box, sphere}
+public enum RectangleType { none, ARectangle, BRectangle}
 public class timeline : MonoBehaviour
 {
     Dictionary<Guid, AnnotationData> m_allAnnotations;
@@ -73,13 +76,21 @@ public class timeline : MonoBehaviour
     public bool DeleteMode;
 
     private LineRenderer line;
+    private GameObject rectangle;
     [HideInInspector] public float sliderValueFromEditor = 50;
 
 
     //NEW TEST STUFF
     private Dictionary<AnnotationType, GameObject> annotationPrefabs;
-    private Dictionary<Guid, GameObject> m_instantiatedObjects = new Dictionary<Guid, GameObject>();
-    private HashSet<Guid> instantiatedAnnotations = new HashSet<Guid>();
+    private Dictionary<Guid, GameObject> m_instantiatedLines = new Dictionary<Guid, GameObject>();
+    public Dictionary<Guid, GameObject> m_instantiatedRectangles = new Dictionary<Guid, GameObject>();
+    private HashSet<Guid> instantiatedLines = new HashSet<Guid>();
+    private HashSet<Guid> instantiatedRectangles = new HashSet<Guid>();
+    private GameObject ARectangle;
+    private GameObject BRectangle;
+    public GameObject rectanglePrefab;
+
+
     void Start()
     {
         rerunManager = transform.parent.parent.parent.parent.gameObject;
@@ -114,7 +125,7 @@ public class timeline : MonoBehaviour
         {
             // Instantiate the line renderer prefab
             GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.twoobjectline]);
-            m_instantiatedObjects.Add(guid, lineObject);
+            m_instantiatedLines.Add(guid, lineObject);
             // Get the line renderer component
             LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
             return lineRenderer;
@@ -123,7 +134,7 @@ public class timeline : MonoBehaviour
         {
             // Instantiate the line renderer prefab
             GameObject lineObject = Instantiate(annotationPrefabs[AnnotationType.forwardline]);
-            m_instantiatedObjects.Add(guid, lineObject);
+            m_instantiatedLines.Add(guid, lineObject);
             // Get the line renderer component
             LineRenderer lineRenderer = lineObject.GetComponent<LineRenderer>();
             lineObject.transform.SetParent(GameObject.Find(annotationData.annotationVisualizationData).transform);
@@ -132,7 +143,26 @@ public class timeline : MonoBehaviour
         }
         else { return null; }
     }
-
+    public GameObject InstantiateRectangle(Guid guid, AnnotationData anno)
+    {
+        if (anno.rectDrawing == RectangleType.ARectangle)
+        {
+            ARectangle = Instantiate(rectanglePrefab, this.transform.parent); // parent is the canvas that holds everything
+            ARectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-Screen.width / 4, Screen.height / 4);
+            ARectangle.name = "ARectangle";
+            this.gameObject.GetComponentInParent<timeline>().m_instantiatedRectangles.Add(guid, ARectangle);
+            return ARectangle;
+        }
+        else if (anno.rectDrawing == RectangleType.BRectangle)
+        {
+            BRectangle = Instantiate(rectanglePrefab, this.transform.parent);
+            BRectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(Screen.width / 4, Screen.height / 4);
+            BRectangle.name = "BRectangle";
+            this.gameObject.GetComponentInParent<timeline>().m_instantiatedRectangles.Add(guid, BRectangle);
+            return BRectangle;
+        }
+        else { return null; }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -186,18 +216,26 @@ public class timeline : MonoBehaviour
             localCurrentTime = rerunManager.GetComponent<RerunGUI>().currentTimeInFloat;
             if (((localCurrentTime < anno.Value.stopTime) && (localCurrentTime > anno.Value.startTime)))
             {
-                if (!m_instantiatedObjects.ContainsKey(anno.Key))
+                if (!m_instantiatedLines.ContainsKey(anno.Key))
                 {
-
-                    if (!instantiatedAnnotations.Contains(anno.Key))
+                    if (!instantiatedLines.Contains(anno.Key))
                     {
                         line = InstantiateLineRenderer(anno.Key, anno.Value);
-                        instantiatedAnnotations.Add(anno.Key);
+                        instantiatedLines.Add(anno.Key);
+                    }
+                }
+                if (!m_instantiatedRectangles.ContainsKey(anno.Key))
+                {
+                    if (!instantiatedRectangles.Contains(anno.Key))
+                    {
+                        rectangle = InstantiateRectangle(anno.Key, anno.Value);
+                        instantiatedRectangles.Add(anno.Key);
                     }
                 }
 
+
                 //This is here so that the lineRenderer positions are in void Update()
-                if(anno.Value.type == AnnotationType.twoobjectline)
+                if (anno.Value.type == AnnotationType.twoobjectline)
                 {
                     Dictionary<string, string> deserializedData = JsonConvert.DeserializeObject<Dictionary<string, string>>(anno.Value.annotationVisualizationData);
                     line.SetPosition(0, GameObject.Find(deserializedData["gameObjectName1"]).transform.position);
@@ -205,20 +243,29 @@ public class timeline : MonoBehaviour
                 }
                 if(anno.Value.type == AnnotationType.forwardline)
                 {
-                    line.SetPosition(1, GameObject.Find(anno.Value.annotationVisualizationData).transform.forward * sliderValueFromEditor);
+                    if (line != null)
+                    {
+                        line.SetPosition(1, GameObject.Find(anno.Value.annotationVisualizationData).transform.forward * sliderValueFromEditor);
+                    }
                 }
             }
 
             if (localCurrentTime < anno.Value.startTime || localCurrentTime > anno.Value.stopTime)
             {
-                if (m_instantiatedObjects.ContainsKey(anno.Key))
+                if (m_instantiatedLines.ContainsKey(anno.Key))
                 {
-
-                        GameObject GO = m_instantiatedObjects[anno.Key];
-                        Destroy(GO);
-                        m_instantiatedObjects.Remove(anno.Key);
+                    GameObject GO = m_instantiatedLines[anno.Key];
+                    Destroy(GO);
+                    m_instantiatedLines.Remove(anno.Key);
                 }
-                instantiatedAnnotations.Remove(anno.Key);
+                if (m_instantiatedRectangles.ContainsKey(anno.Key))
+                {
+                    GameObject GO = m_instantiatedRectangles[anno.Key];
+                    Destroy(GO);
+                    m_instantiatedRectangles.Remove(anno.Key);
+                }
+                instantiatedLines.Remove(anno.Key);
+                instantiatedRectangles.Remove(anno.Key);
 
             }
         }
@@ -237,9 +284,9 @@ public class timeline : MonoBehaviour
             var t = Instantiate(AnnotationPrefab, transform);
             AllInstatiatedAnnotations.Add(t);
             t.GetComponent<bigButton>().InitilizeData(anno.Value, anno.Key);
-            if (anno.Value.type == AnnotationType.none) { t.GetComponentInChildren<editorScript>().dropdown.value = 0; }
-            if (anno.Value.type == AnnotationType.forwardline) { t.GetComponentInChildren<editorScript>().dropdown.value = 1; }
-            if (anno.Value.type == AnnotationType.twoobjectline) { t.GetComponentInChildren<editorScript>().dropdown.value = 2; }
+            if (anno.Value.type == AnnotationType.none) { t.GetComponentInChildren<editorScript>().lineRendererdropdown.value = 0; }
+            if (anno.Value.type == AnnotationType.forwardline) { t.GetComponentInChildren<editorScript>().lineRendererdropdown.value = 1; }
+            if (anno.Value.type == AnnotationType.twoobjectline) { t.GetComponentInChildren<editorScript>().lineRendererdropdown.value = 2; }
             t.GetComponentInChildren<editorScript>().inputText.text = anno.Value.annotationText;
 
         }

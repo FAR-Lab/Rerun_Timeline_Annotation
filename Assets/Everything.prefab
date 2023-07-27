@@ -181,6 +181,10 @@ MonoBehaviour:
   AnnotationPrefab: {fileID: 7402564024640634078, guid: 9247b270a511d6d4abde2f700fe1f015, type: 3}
   localLength: 0
   localCurrentTime: 0
+  rerunManager: {fileID: 0}
+  DeleteMode: 0
+  sliderValueFromEditor: 50
+  rectanglePrefab: {fileID: 6364404477519917609, guid: 4297fcc514752914c886a1f6f5ae3f9a, type: 3}
 --- !u!114 &6024998247711767064
 MonoBehaviour:
   m_ObjectHideFlags: 0
