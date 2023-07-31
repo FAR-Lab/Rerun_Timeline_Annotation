@@ -232,4 +232,19 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
+    public void setAnnoRectDimensions(string rectDimension)
+    {
+        data = new AnnotationData
+        {
+            startTime = myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength,
+            stopTime = ((myRectTransform.sizeDelta.x / this.transform.parent.GetComponent<RectTransform>().rect.width) * GetComponentInParent<timeline>().localLength) + (myRectTransform.anchoredPosition.x / this.transform.parent.GetComponent<RectTransform>().rect.width * GetComponentInParent<timeline>().localLength),
+            annotationText = this.gameObject.transform.GetComponentInChildren<TMP_Text>().text,
+            Categories = new List<string>(),
+            type = data.type,
+            annotationVisualizationData = data.annotationVisualizationData,
+            rectDrawing = data.rectDrawing,
+            rectDimensions = rectDimension
+        };
+        transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
+    }
 }  

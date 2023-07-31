@@ -8,6 +8,7 @@ using Rerun;
 using UltimateReplay.Storage;
 using UltimateReplay;
 using UltimateReplay.Statistics;
+using UnityEngine.EventSystems;
 
 public struct AnnotationData
 {
@@ -16,11 +17,11 @@ public struct AnnotationData
     public float startTime;
     public float stopTime;
     public string annotationText;
-    public List<string> Categories;
-    public AnnotationType type;
+    public List<string> Categories; //TODO
+    public AnnotationType type; //type of linerenderer (none, forwardline, twoobjectline)
     public string annotationVisualizationData; //stores name of gameobject(s)
-    public RectangleType rectDrawing;
-    public string rectDimensions;
+    public RectangleType rectDrawing; // none, rectangle for participant A, rectangle for participant B
+    public string rectDimensions; //anchoredposition and width height
 }
 
 public struct timelineData
@@ -90,6 +91,11 @@ public class timeline : MonoBehaviour
     private GameObject BRectangle;
     public GameObject rectanglePrefab;
 
+    private RectTransform rectTransform;
+    private RectTransform UITransform;
+    private float amountMoved;
+    private float initialWidth;
+    [HideInInspector] public float sideButtonSizeFactor = 200;
 
     void Start()
     {
@@ -148,7 +154,16 @@ public class timeline : MonoBehaviour
         if (anno.rectDrawing == RectangleType.ARectangle)
         {
             ARectangle = Instantiate(rectanglePrefab, this.transform.parent); // parent is the canvas that holds everything
-            ARectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-Screen.width / 4, Screen.height / 4);
+            if (anno.rectDimensions != null)
+            {
+                Dictionary<string, float> deserializedData = JsonConvert.DeserializeObject<Dictionary<string, float>>(anno.rectDimensions);
+                ARectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(deserializedData["X"], deserializedData["Y"]);
+                ARectangle.GetComponent<RectTransform>().sizeDelta = new Vector2(deserializedData["width"], deserializedData["height"]);
+            }
+            else
+            {
+                ARectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(-Screen.width / 4, Screen.height / 4);
+            }
             ARectangle.name = "ARectangle";
             this.gameObject.GetComponentInParent<timeline>().m_instantiatedRectangles.Add(guid, ARectangle);
             return ARectangle;
@@ -156,7 +171,16 @@ public class timeline : MonoBehaviour
         else if (anno.rectDrawing == RectangleType.BRectangle)
         {
             BRectangle = Instantiate(rectanglePrefab, this.transform.parent);
-            BRectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(Screen.width / 4, Screen.height / 4);
+            if (anno.rectDimensions != null)
+            {
+                Dictionary<string, float> deserializedData = JsonConvert.DeserializeObject<Dictionary<string, float>>(anno.rectDimensions);
+                BRectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(deserializedData["X"], deserializedData["Y"]);
+                BRectangle.GetComponent<RectTransform>().sizeDelta = new Vector2(deserializedData["width"], deserializedData["height"]);
+            }
+            else 
+            {
+                BRectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(Screen.width / 4, Screen.height / 4);
+            }
             BRectangle.name = "BRectangle";
             this.gameObject.GetComponentInParent<timeline>().m_instantiatedRectangles.Add(guid, BRectangle);
             return BRectangle;
