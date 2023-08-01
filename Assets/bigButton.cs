@@ -17,7 +17,7 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
     public GameObject RerunManager;
 
     AnnotationData data;
-    Guid m_guid; 
+    public Guid m_guid; 
     void Start()
     {
         myRectTransform = this.gameObject.GetComponent<RectTransform>();
@@ -197,7 +197,7 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             type = data.type,
             annotationVisualizationData = data.annotationVisualizationData,
             rectDrawing = RectangleType.ARectangle,
-            rectDimensions = data.rectDimensions
+            rectDimensions = null
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
@@ -213,7 +213,7 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             type = data.type,
             annotationVisualizationData = data.annotationVisualizationData,
             rectDrawing = RectangleType.BRectangle,
-            rectDimensions = data.rectDimensions
+            rectDimensions = null
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }
@@ -228,7 +228,7 @@ public class bigButton : MonoBehaviour , IPointerClickHandler
             type = data.type,
             annotationVisualizationData = data.annotationVisualizationData,
             rectDrawing = RectangleType.none,
-            rectDimensions = data.rectDimensions
+            rectDimensions = null
         };
         transform.parent.GetComponent<timeline>().UpdateAnnotation(data, m_guid);
     }

@@ -4,11 +4,12 @@ using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
 using Newtonsoft.Json;
+using Rerun;
 
 public struct rectData
 {
     public float X { get; set; }
-    public float y { get; set; }
+    public float Y { get; set; }
     public float width { get; set; }
     public float height { get; set; }
 }
@@ -59,13 +60,35 @@ public class resizeRectangle : MonoBehaviour, IBeginDragHandler, IDragHandler
                 break;
         }
         //TODO MAKE THIS DATA ALWAYS THE 0 VIEW DATA (use if statements and get currentview from RerunLayoutManager)
-        rectData.X = UITransform.anchoredPosition.x;
-        rectData.width = UITransform.sizeDelta.x;
-        rectData.y = UITransform.anchoredPosition.y;
-        rectData.height = UITransform.sizeDelta.y;
+        if(this.gameObject.GetComponentInParent<RerunLayoutManager>().currentView == 0)
+        {
+            rectData.X = UITransform.anchoredPosition.x;
+            rectData.width = UITransform.sizeDelta.x;
+            rectData.Y = UITransform.anchoredPosition.y;
+            rectData.height = UITransform.sizeDelta.y;
+        }
+        else
+        {
+            if(this.transform.parent.name == "ARectangle")
+            {
+                // Reverse size operation
+                rectData.X = ((UITransform.anchoredPosition.x / 2) - Screen.width / 4);
+                rectData.width = UITransform.rect.width / 2;
+                rectData.Y = ((UITransform.anchoredPosition.y / 2) + (Screen.height / 4));
+                rectData.height = UITransform.rect.height / 2;
+            }
+            else if (this.transform.parent.name == "BRectangle")
+            {
+                // Reverse size operation
+                rectData.X = ((UITransform.anchoredPosition.x / 2) + Screen.width / 4);
+                rectData.width = UITransform.rect.width / 2;
+                rectData.Y = ((UITransform.anchoredPosition.y / 2) + (Screen.height / 4));
+                rectData.height = UITransform.rect.height / 2;
+            }
+        }
         string jsonString = JsonConvert.SerializeObject(rectData);
         Debug.Log(jsonString);
-        this.gameObject.GetComponent<bigButton>().setAnnoRectDimensions(jsonString); //FIGURE OUT THIS, CURRENTLY BROKEN BECAUSE THIS SCRIPT IS NOT UNDER BIGBUTTON
+        this.transform.parent.GetComponent<rectangleMasterScript>().updateRectSize(jsonString);
     }
     // Start is called before the first frame update
     void Start()

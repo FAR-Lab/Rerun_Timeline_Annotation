@@ -1,1 +1,40 @@
-{"jsonAnnotations":[{"startTime":13.6723242,"stopTime":18.1146946,"annotationText":"adskfadjkfa;dkjfsl","Categories":[],"type":2,"annotationVisualizationData":"RerunOVRCameraRig","rectDrawing":1,"rectDimensions":null},{"startTime":0.721003234,"stopTime":7.890527,"annotationText":"Annotation 1","Categories":[],"type":2,"annotationVisualizationData":"RerunOVRCameraRig","rectDrawing":2,"rectDimensions":null},{"startTime":5.0,"stopTime":10.0,"annotationText":"Two object line renderer","Categories":[],"type":1,"annotationVisualizationData":"{\"gameObjectName1\":\"RerunOVRCameraRig\",\"gameObjectName2\":\"Cube\"}","rectDrawing":0,"rectDimensions":null}],"scenarioLength":22.6840878,"scenarioName":"silly","currentTime":0.0}
+{
+    "jsonAnnotations": [
+        {
+            "startTime": 13.6723242,
+            "stopTime": 18.1146946,
+            "annotationText": "nice",
+            "Categories": [
+            ],
+            "type": 2,
+            "annotationVisualizationData": "RerunOVRCameraRig",
+            "rectDrawing": 2,
+            "rectDimensions": "{\"X\":152.254333,\"Y\":357.398865,\"width\":218.844116,\"height\":125.202271}"
+        },
+        {
+            "startTime": 0.7565264,
+            "stopTime": 7.92605,
+            "annotationText": "Annotation 1",
+            "Categories": [
+            ],
+            "type": 2,
+            "annotationVisualizationData": "RerunOVRCameraRig",
+            "rectDrawing": 1,
+            "rectDimensions": "{\"X\":-480.774963,\"Y\":282.399536,\"width\":915.3271,\"height\":374.397247}"
+        },
+        {
+            "startTime": 5.0,
+            "stopTime": 10.0,
+            "annotationText": "Two object line renderer",
+            "Categories": [
+            ],
+            "type": 2,
+            "annotationVisualizationData": "RerunOVRCameraRig",
+            "rectDrawing": 2,
+            "rectDimensions": "{\"X\":709.422,\"Y\":291.849762,\"width\":371.791748,\"height\":143.930725}"
+        }
+    ],
+    "scenarioLength": 22.6840878,
+    "scenarioName": "silly",
+    "currentTime": 0.0
+}

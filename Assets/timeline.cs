@@ -151,14 +151,19 @@ public class timeline : MonoBehaviour
     }
     public GameObject InstantiateRectangle(Guid guid, AnnotationData anno)
     {
+        int originalLayout = this.gameObject.GetComponentInParent<RerunLayoutManager>().currentView;
+        this.gameObject.GetComponentInParent<RerunLayoutManager>().ToggleLayouts(0);
         if (anno.rectDrawing == RectangleType.ARectangle)
         {
-            ARectangle = Instantiate(rectanglePrefab, this.transform.parent); // parent is the canvas that holds everything
+            ARectangle = Instantiate(rectanglePrefab, this.transform.parent); // parent is the canvas that holds everything 
+            ARectangle.GetComponent<rectangleMasterScript>().associatedGUID = guid;
             if (anno.rectDimensions != null)
             {
                 Dictionary<string, float> deserializedData = JsonConvert.DeserializeObject<Dictionary<string, float>>(anno.rectDimensions);
                 ARectangle.GetComponent<RectTransform>().anchoredPosition = new Vector2(deserializedData["X"], deserializedData["Y"]);
                 ARectangle.GetComponent<RectTransform>().sizeDelta = new Vector2(deserializedData["width"], deserializedData["height"]);
+                Debug.Log(this.gameObject.GetComponentInParent<RerunLayoutManager>().currentView);
+
             }
             else
             {
@@ -166,11 +171,13 @@ public class timeline : MonoBehaviour
             }
             ARectangle.name = "ARectangle";
             this.gameObject.GetComponentInParent<timeline>().m_instantiatedRectangles.Add(guid, ARectangle);
+            this.gameObject.GetComponentInParent<RerunLayoutManager>().ToggleLayouts(originalLayout);
             return ARectangle;
         }
         else if (anno.rectDrawing == RectangleType.BRectangle)
         {
             BRectangle = Instantiate(rectanglePrefab, this.transform.parent);
+            BRectangle.GetComponent<rectangleMasterScript>().associatedGUID = guid;
             if (anno.rectDimensions != null)
             {
                 Dictionary<string, float> deserializedData = JsonConvert.DeserializeObject<Dictionary<string, float>>(anno.rectDimensions);
@@ -313,6 +320,9 @@ public class timeline : MonoBehaviour
             if (anno.Value.type == AnnotationType.twoobjectline) { t.GetComponentInChildren<editorScript>().lineRendererdropdown.value = 2; }
             t.GetComponentInChildren<editorScript>().inputText.text = anno.Value.annotationText;
 
+            if (anno.Value.rectDrawing == RectangleType.none) { t.GetComponentInChildren<editorScript>().rectangleAnnoDropdown.value = 0; }
+            if (anno.Value.rectDrawing == RectangleType.ARectangle) { t.GetComponentInChildren<editorScript>().rectangleAnnoDropdown.value = 1; }
+            if (anno.Value.rectDrawing == RectangleType.BRectangle) { t.GetComponentInChildren<editorScript>().rectangleAnnoDropdown.value = 2; }
         }
 
     }
