@@ -52,6 +52,7 @@ public class autoGenerateTimeMarkers : MonoBehaviour
                 markers.Add(closestMarker);
             }
         }
+
         int diffCenterAndFirst = markers[1] - markers[0];
         markers.Add(markers[1] + diffCenterAndFirst);
         markers.Add((int)videoLength);
